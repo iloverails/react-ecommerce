@@ -1,10 +1,12 @@
 import { Action } from 'redux'
 
 export type AuthUser = {
-    email: string,
-    username?: string,
     access: string,
-    refresh: string
+    refresh: string,
+    authenticatedUser: {
+        email: string,
+        username?: string,
+    }
 }
 
 export interface ActionWithPayload<T> extends Action {

@@ -5,14 +5,14 @@ import styled from 'styled-components';
 
 import { Login } from '../features/auth/login/Login'
 
+import { logout } from '../features/auth/authSlice'
+
 import { useAppSelector, useAppDispatch } from '../app/hooks';
+import {selectStatus} from '../features/auth/authSlice';
 
 export default function Header() {
     const dispatch = useAppDispatch();
-
-    const handleClickLogout = () => {
-        // dispatch(logOut());
-    };
+    let isLoggedIn = useAppSelector(selectStatus);
 
 
     const SearchButton = styled(Button)`
@@ -32,6 +32,9 @@ export default function Header() {
 
     const showLogin = () => setShow(true)
     const hideLogin = () => setShow(false)
+    const toggleModal = (display: boolean) => {
+        setShow(display)
+    }
 
     return (
         <header>
@@ -52,13 +55,18 @@ export default function Header() {
                     </Nav.Item>
                     <Navbar.Collapse id="basic-navbar-nav">
                         <Nav className="ms-auto">
-                            <Nav.Link onClick={showLogin}>Login</Nav.Link>
+                            {
+                                isLoggedIn ?
+                                    <Nav.Link onClick={()=>{dispatch(logout())}}>Logout</Nav.Link>
+                                    :
+                                    <Nav.Link onClick={showLogin}>Login</Nav.Link>
+                            }
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
             </Container>
             <Modal show={show} onHide={hideLogin}>
-                <Login closeModal={hideLogin} />
+                <Login toggleModal={toggleModal} />
             </Modal>
         </header>
 
