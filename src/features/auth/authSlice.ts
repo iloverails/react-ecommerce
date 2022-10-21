@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { userLogin } from './login/loginAPI';
+import { userRegister } from './register/registerAPI';
 import { RootState, AppThunk } from '../../app/store';
 import { AuthUser } from "../../models/authUser";
 
 export interface AuthState {
     isLoggedIn: boolean;
     authUser?: AuthUser;
-    status?: string
+    loginStatus?: "loading" | "finished" | "rejected";
+    registerStatus?: "loading" | "finished" | "rejected";
 }
 
 const initialState: AuthState = {
@@ -34,23 +36,28 @@ export const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(userLogin.pending, (state) => {
-                state.status = 'loading';
+                state.loginStatus = 'loading';
                 state.isLoggedIn = false;
             })
             .addCase(userLogin.fulfilled, (state, action: any) => {
-                state.status = 'finished';
+                state.loginStatus = 'finished';
                 state.authUser = action.payload;
                 state.isLoggedIn = true;
             })
             .addCase(userLogin.rejected, (state) => {
-                state.status = 'rejected';
+                state.loginStatus = 'rejected';
                 state.isLoggedIn = false;
+            })
+            .addCase(userRegister.fulfilled, (state) => {
+                state.isLoggedIn = false;
+                state.registerStatus = "finished";
             });
     },
 });
 
 export const { login, logout, register } = authSlice.actions;
 
-export const selectStatus = (state: RootState) => state.auth.isLoggedIn;
-
+export const selectLoginStatus = (state: RootState) => state.auth.loginStatus;
+export const selectRegisterStatus = (state: RootState) => state.auth.registerStatus;
+export const selectIsLoggedIn =  (state: RootState) => state.auth.isLoggedIn;
 export default authSlice.reducer;

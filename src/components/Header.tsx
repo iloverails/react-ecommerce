@@ -4,15 +4,16 @@ import { Container, Nav, Navbar, Button, Image, Form, Modal, InputGroup } from '
 import styled from 'styled-components';
 
 import { Login } from '../features/auth/login/Login'
+import { Register } from '../features/auth/register/Register'
 
 import { logout } from '../features/auth/authSlice'
 
 import { useAppSelector, useAppDispatch } from '../app/hooks';
-import {selectStatus} from '../features/auth/authSlice';
+import { selectIsLoggedIn } from '../features/auth/authSlice';
 
 export default function Header() {
     const dispatch = useAppDispatch();
-    let isLoggedIn = useAppSelector(selectStatus);
+    let isLoggedIn = useAppSelector(selectIsLoggedIn);
 
 
     const SearchButton = styled(Button)`
@@ -30,10 +31,28 @@ export default function Header() {
 
     const [show, setShow] = useState(false);
 
-    const showLogin = () => setShow(true)
-    const hideLogin = () => setShow(false)
-    const toggleModal = (display: boolean) => {
+    const [statusAuthForm, setStatusAuthForm] = useState('');
+
+    const setAuthFormStatus = (status: string) => {
+        setStatusAuthForm(status)
+    }
+
+    const toggleModal = (display: boolean, status?: string) => {
+        if (status)
+            setAuthFormStatus(status)
+
         setShow(display)
+    }
+
+    const switchAuthStatuses = (statusAuthForm: string) => {
+        switch (statusAuthForm) {
+            case 'login':
+                return <Login toggleModal={toggleModal} setAuthFormStatus={setAuthFormStatus} />
+            case 'register':
+                return <Register toggleModal={toggleModal} setAuthFormStatus={setAuthFormStatus} />
+            default:
+                return <Login toggleModal={toggleModal} setAuthFormStatus={setAuthFormStatus} />
+        }
     }
 
     return (
@@ -59,14 +78,14 @@ export default function Header() {
                                 isLoggedIn ?
                                     <Nav.Link onClick={()=>{dispatch(logout())}}>Logout</Nav.Link>
                                     :
-                                    <Nav.Link onClick={showLogin}>Login</Nav.Link>
+                                    <Nav.Link onClick={()=> { toggleModal(true, 'login') }}>Login</Nav.Link>
                             }
                         </Nav>
                     </Navbar.Collapse>
                 </Navbar>
             </Container>
-            <Modal show={show} onHide={hideLogin}>
-                <Login toggleModal={toggleModal} />
+            <Modal show={show} onHide={()=>{ toggleModal(false) }}>
+                { switchAuthStatuses(statusAuthForm) }
             </Modal>
         </header>
 

@@ -1,38 +1,40 @@
 import React, { useState, useEffect } from 'react';
 
 import { useAppSelector, useAppDispatch } from '../../../app/hooks';
-import {selectLoginStatus} from '../authSlice';
+import {selectRegisterStatus} from '../authSlice';
 import { Card, Form, Button } from 'react-bootstrap';
 import { useForm, SubmitHandler } from "react-hook-form";
-import { userLogin } from './loginAPI'
+import { userRegister } from './registerAPI'
+
 
 type Props = {
     toggleModal: (status: boolean) => void,
     setAuthFormStatus: (status: string) => void
 }
-export function Login({toggleModal, setAuthFormStatus}: Props) {
+export function Register({toggleModal, setAuthFormStatus}: Props) {
     const dispatch = useAppDispatch();
     const { register, handleSubmit, watch, formState: { errors } } = useForm<Inputs>();
-    let loginStatus = useAppSelector(selectLoginStatus);
+    let registerStatus = useAppSelector(selectRegisterStatus);
 
     useEffect(() => {
-        if (loginStatus === "finished") {
-            toggleModal(false)
+        if (registerStatus === 'finished') {
+            setAuthFormStatus('login')
         }
-    }, [ loginStatus ])
+    }, [ registerStatus ])
 
     type Inputs = {
         email: string,
-        password: string
+        password: string,
+        username: string
     };
 
 
-    const onSubmit: SubmitHandler<Inputs>= (data: {email: string, password: string}) => {
-        dispatch(userLogin(data))
+    const onSubmit: SubmitHandler<Inputs>= (data: Inputs) => {
+        dispatch(userRegister(data))
     }
 
-    const goToRegister = () => {
-        setAuthFormStatus('register')
+    const goToLogin = () => {
+        setAuthFormStatus('login')
     }
 
     return (
@@ -42,7 +44,7 @@ export function Login({toggleModal, setAuthFormStatus}: Props) {
                     <Card.Body>
                         <div className="mb-3 mt-md-4">
                             <h2 className="fw-bold mb-2 text-uppercase ">Brand</h2>
-                            <p className=" mb-5">Please enter your login and password!</p>
+                            <p className=" mb-5">Form registration!</p>
                             <div className="mb-3">
                                 <Form onSubmit={handleSubmit(onSubmit)}>
                                     <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -51,6 +53,14 @@ export function Login({toggleModal, setAuthFormStatus}: Props) {
                                         </Form.Label>
                                         <Form.Control type="email" placeholder="Enter email" {...register("email", { required: true })}/>
                                         {errors.email && <span>This field is required</span>}
+                                    </Form.Group>
+
+                                    <Form.Group className="mb-3" controlId="formBasicUsername">
+                                        <Form.Label className="text-center">
+                                            Username
+                                        </Form.Label>
+                                        <Form.Control type="text" placeholder="Enter username" {...register("username", { required: true })}/>
+                                        {errors.username && <span>This field is required</span>}
                                     </Form.Group>
 
                                     <Form.Group
@@ -73,15 +83,15 @@ export function Login({toggleModal, setAuthFormStatus}: Props) {
                                     </Form.Group>
                                     <div className="d-grid">
                                         <Button variant="primary" type="submit">
-                                            Login
+                                            Sign Up
                                         </Button>
                                     </div>
                                 </Form>
                                 <div className="mt-3">
                                     <p className="mb-0  text-center">
-                                        Don't have an account?
-                                        <a onClick={goToRegister} className="text-primary fw-bold">
-                                            Sign Up
+                                        Do you already have account?{" "}
+                                        <a onClick={goToLogin} className="text-primary fw-bold">
+                                            Login
                                         </a>
                                     </p>
                                 </div>
