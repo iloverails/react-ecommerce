@@ -1,7 +1,7 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { userLogin } from './login/loginAPI';
+import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { userRegister } from './register/registerAPI';
-import { RootState, AppThunk } from '../../app/store';
+import { userLogin } from './login/loginAPI';
+import { RootState } from '../../app/store';
 import { AuthUser } from "../../models/authUser";
 
 export interface AuthState {
@@ -50,7 +50,11 @@ export const authSlice = createSlice({
             })
             .addCase(userRegister.fulfilled, (state) => {
                 state.isLoggedIn = false;
-                state.registerStatus = "finished";
+                state.registerStatus = "finished"
+            })
+            .addCase('users/logout', (state, action) => {
+                state.isLoggedIn = false;
+                state.authUser = undefined;
             });
     },
 });

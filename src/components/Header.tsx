@@ -6,8 +6,7 @@ import styled from 'styled-components';
 import { Login } from '../features/auth/login/Login'
 import { Register } from '../features/auth/register/Register'
 
-import { logout } from '../features/auth/authSlice'
-
+import {userLogout} from '../features/auth/login/loginAPI'
 import { useAppSelector, useAppDispatch } from '../app/hooks';
 import { selectIsLoggedIn } from '../features/auth/authSlice';
 
@@ -76,7 +75,7 @@ export default function Header() {
                         <Nav className="ms-auto">
                             {
                                 isLoggedIn ?
-                                    <Nav.Link onClick={()=>{dispatch(logout())}}>Logout</Nav.Link>
+                                    <Nav.Link onClick={()=>{dispatch(userLogout())}}>Logout</Nav.Link>
                                     :
                                     <Nav.Link onClick={()=> { toggleModal(true, 'login') }}>Login</Nav.Link>
                             }

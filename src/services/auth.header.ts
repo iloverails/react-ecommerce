@@ -11,7 +11,6 @@ export default function authHeader() {
             console.log(err)
         }
 
-    console.log(authUser)
     if (authUser && authUser.access) {
         return { Authorization: 'Bearer ' + authUser.access };
     } else {

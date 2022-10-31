@@ -1,12 +1,6 @@
 import axios from 'axios'
-import {createAsyncThunk} from "@reduxjs/toolkit";
-import {AuthUser} from "../../../models/authUser";
-
-interface LoginData {
-    email: string,
-    password: string,
-    username?: string
-}
+import {createAsyncThunk, createAction} from "@reduxjs/toolkit";
+import {AuthUser, LoginData} from "../../../models/authUser";
 
 export const userLogin = createAsyncThunk(
     'users/login',
@@ -25,3 +19,15 @@ export const userLogin = createAsyncThunk(
         }
     },
 );
+
+export const userLogout = createAction(
+    'users/logout',
+    function logout() {
+        localStorage.removeItem('authUser');
+        return {
+            payload: {
+                success: true
+            }
+        }
+    }
+)
